@@ -3,4 +3,4 @@ package com.example.simple_chat_server_example.chat.repository
 import com.example.simple_chat_server_example.chat.Entity.Chat
 import org.springframework.data.jpa.repository.JpaRepository
 
-interface chatRepository : JpaRepository<Chat, Long>
+interface ChatRepository : JpaRepository<Chat, Long>

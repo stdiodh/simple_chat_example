@@ -11,7 +11,7 @@ import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerCo
 class WebSocketConfig : WebSocketMessageBrokerConfigurer {
     //클라 서버 세션 연결
     override fun registerStompEndpoints(registry: StompEndpointRegistry) {
-        registry.addEndpoint("/chat").setAllowedOriginPatterns("*")
+        registry.addEndpoint("/chat").setAllowedOriginPatterns("*").withSockJS()
     }
 
     //pub과 sub의 데이터 통신 정의

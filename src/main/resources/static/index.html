@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>Simple Chat</title>
+    <script src="https://cdn.jsdelivr.net/npm/sockjs-client@1.5.1/dist/sockjs.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/stompjs@2.3.3/lib/stomp.min.js"></script>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        #chat-box { border: 1px solid #ccc; height: 300px; overflow-y: scroll; margin-bottom: 10px; padding: 10px; }
+    </style>
+</head>
+<body>
+<h2>🔥 실시간 채팅</h2>
+
+<label>닉네임: <input type="text" id="from" /></label><br/>
+<label>채팅방(topic): <input type="text" id="topic" value="chat" /></label><br/><br/>
+
+<div id="chat-box"></div>
+
+<input type="text" id="message" placeholder="메시지를 입력하세요" />
+<button onclick="sendMessage()">보내기</button>
+
+<script>
+    const socket = new SockJS("/chat");
+    const stompClient = Stomp.over(socket);
+
+    let topic = "chat";
+
+    stompClient.connect({}, function () {
+        document.getElementById("topic").addEventListener("change", function () {
+            topic = this.value;
+        });
+
+        stompClient.subscribe("/sub/chat", function (msg) {
+            const message = JSON.parse(msg.body);
+            const messageBox = document.createElement("div");
+            messageBox.textContent = `${message.from}: ${message.message}`;
+            document.getElementById("chat-box").appendChild(messageBox);
+        });
+    });
+
+    function sendMessage() {
+        const from = document.getElementById("from").value.trim();
+        const text = document.getElementById("message").value.trim();
+        const topicValue = document.getElementById("topic").value.trim();
+
+        if (!from || !text || !topicValue) {
+            alert("닉네임, 메시지, 토픽 모두 입력해주세요!");
+            return;
+        }
+
+        stompClient.send("/pub/chat/message", {}, JSON.stringify({
+            from: from,
+            to: "everyone",
+            topic: topicValue,
+            message: text
+        }));
+
+        // 내 메시지도 바로 출력
+        const messageBox = document.createElement("div");
+        messageBox.textContent = `${from} (나): ${text}`;
+        document.getElementById("chat-box").appendChild(messageBox);
+
+        document.getElementById("message").value = "";
+    }
+</script>
+</body>
+</html>

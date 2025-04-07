@@ -1,3 +1,16 @@
 spring:
   application:
     name: simple_chat_server_example
+
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/chat_db?autoReconnect=true&useUnicode=true&serverTimezone=Asia/Seoul
+    username: chat
+    password: chat
+
+  jpa:
+    database: mysql
+    database-platform: org.hibernate.dialect.MySQL8Dialect
+    hibernate:
+      ddl-auto: create
+    show-sql: true
